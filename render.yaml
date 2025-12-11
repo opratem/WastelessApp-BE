@@ -2,25 +2,17 @@ services:
   # PostgreSQL Database
   - type: pserv
     name: wasteless-db
-    env: docker
     plan: free
-    databases:
-      - name: wasteless_db
-        databaseName: wasteless_db
-        user: wasteless_user
+    databaseName: wasteless_db
+    user: wasteless_user
 
-  # Backend - Spring Boot API
+  # Backend - Spring Boot API (Docker)
   - type: web
     name: wasteless-backend
-    env: java
-    region: oregon
+    runtime: docker
     plan: free
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/*.jar
     healthCheckPath: /actuator/health
     envVars:
-      - key: JAVA_VERSION
-        value: 17
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: wasteless-db
