@@ -1,0 +1,49 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: wasteless-db
+    env: docker
+    plan: free
+    databases:
+      - name: wasteless_db
+        databaseName: wasteless_db
+        user: wasteless_user
+
+  # Backend - Spring Boot API
+  - type: web
+    name: wasteless-backend
+    env: java
+    region: oregon
+    plan: free
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/*.jar
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: wasteless-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: wasteless-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: wasteless-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+        # Or set manually to a secure 256-bit key
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: SPOONACULAR_API_KEY
+        sync: false
+        # Set this in Render dashboard to your Spoonacular API key
+      - key: SPOONACULAR_API_BASE_URL
+        value: https://api.spoonacular.com
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
