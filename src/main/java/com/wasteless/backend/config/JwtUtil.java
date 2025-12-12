@@ -16,10 +16,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret:YourSuperSecretKeyThatShouldBeLongEnoughForHS256}")
+    @Value("${JWT_SECRET:${jwt.secret:YourSuperSecretKeyThatShouldBeLongEnoughForHS256}}")
     private String SECRET_KEY;
 
-    @Value("${jwt.expiration:86400000}")
+    @Value("${JWT_EXPIRATION:${jwt.expiration:86400000}}")
     private long EXPIRATION_TIME;
 
     private Key getSignKey() {
