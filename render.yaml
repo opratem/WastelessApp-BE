@@ -22,3 +22,21 @@ services:
         value: https://api.spoonacular.com
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: wasteless_db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: wasteless_db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: wasteless_db
+          property: password
+
+databases:
+  - name: wasteless_db
+    databaseName: wasteless_db
+    user: wasteless_db_user
+    plan: free
