@@ -17,11 +17,12 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Allow requests from React frontend (local and production)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://127.0.0.1:3000",
-                "http://0.0.0.0:3000",
-                "https://wasteless-app-fe.vercel.app"
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "http://0.0.0.0:*",
+                "https://wasteless-app-fe*.vercel.app",
+                "https://*.vercel.app"
         ));
 
         // Allow all HTTP methods
