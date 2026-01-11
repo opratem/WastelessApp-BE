@@ -127,4 +127,36 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/onboarding-preferences")
+    public ResponseEntity<?> saveOnboardingPreferences(@RequestBody Map<String, Object> preferences) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Update profile picture if provided
+        if (preferences.containsKey("profilePicture") && preferences.get("profilePicture") != null) {
+            user.setProfilePicture((String) preferences.get("profilePicture"));
+        }
+
+        // Update username/fullName if provided
+        if (preferences.containsKey("username") && preferences.get("username") != null) {
+            user.setFullName((String) preferences.get("username"));
+        }
+
+        // Save the updated user
+        userRepository.save(user);
+
+        // Return success response with preferences (we can expand this later for storing locations/reminders)
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Preferences saved successfully");
+        response.put("userId", user.getId());
+        response.put("fullName", user.getFullName());
+        response.put("profilePicture", user.getProfilePicture());
+        response.put("preferences", preferences);
+
+        return ResponseEntity.ok(response);
+    }
 }
