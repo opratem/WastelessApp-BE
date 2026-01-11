@@ -159,4 +159,54 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/settings")
+    public ResponseEntity<?> getSettings() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Return user settings (can be expanded later with dedicated settings table)
+        Map<String, Object> response = new HashMap<>();
+        response.put("userId", user.getId());
+        response.put("email", user.getEmail());
+        response.put("fullName", user.getFullName());
+        response.put("onboardingCompleted", user.isOnboardingCompleted());
+
+        // Default notification settings (can be stored in DB later)
+        Map<String, Object> notificationSettings = new HashMap<>();
+        notificationSettings.put("oneDayBefore", true);
+        notificationSettings.put("threeDaysBefore", true);
+        notificationSettings.put("onExpiry", false);
+        notificationSettings.put("emailNotifications", true);
+        notificationSettings.put("pushNotifications", true);
+        response.put("notificationSettings", notificationSettings);
+
+        // Default storage locations
+        Map<String, Boolean> storageLocations = new HashMap<>();
+        storageLocations.put("fridge", true);
+        storageLocations.put("pantry", true);
+        storageLocations.put("freezer", false);
+        response.put("storageLocations", storageLocations);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/notification-settings")
+    public ResponseEntity<?> updateNotificationSettings(@RequestBody Map<String, Object> settings) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // For now, just acknowledge the settings (can be stored in DB later)
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Notification settings updated successfully");
+        response.put("settings", settings);
+
+        return ResponseEntity.ok(response);
+    }
 }
